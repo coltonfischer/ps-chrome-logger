@@ -1,0 +1,80 @@
+class Console
+   method Console();
+   method Log(&pjnLogData As JsonNode);
+private
+   method GetOutputString() Returns string;
+   instance JsonArray &mjaRows;
+end-class;
+
+Global JsonArray &goChromeLoggerRows;
+
+method Console
+   
+   If &goChromeLoggerRows = Null Then
+      &goChromeLoggerRows = CreateJsonArray();
+   End-If;
+   
+   &mjaRows = &goChromeLoggerRows;
+   
+end-method;
+
+
+method Log
+   /+ &pjnLogData as JsonNode +/
+   
+   Local JsonArray &jaLogData = CreateJsonArray();
+   
+   Evaluate &pjnLogData.GetNodeType()
+   When 0
+      &jaLogData.AddNullElement();
+      Break;
+   When 1
+      &jaLogData.AddJsonObjectElement("", &pjnLogData.GetJsonObject());
+      Break;
+   When 2
+      &jaLogData.AddJsonArrayElement("", &pjnLogData.GetJsonArray());
+      Break;
+   When 3
+      &jaLogData.AddElement(&pjnLogData.GetJsonValue().GetValue());
+      Break;
+   When-Other
+      Return;
+   End-Evaluate;
+   
+   Local JsonArray &jaRow = CreateJsonArray();
+   
+   &jaRow.AddJsonArrayElement("", &jaLogData);
+   &jaRow.AddElement(""); /* backtrace */
+   &jaRow.AddElement(""); /* log type */
+   
+   &mjaRows.AddJsonArrayElement("", &jaRow);
+   
+   %Response.SetHeader("X-ChromeLogger-Data", %This.GetOutputString());
+   
+end-method;
+
+
+method GetOutputString
+   /+ Returns String +/
+   
+   Local JsonObject &joOutput = CreateJsonObject();
+   
+   &joOutput.AddProperty("version", "0.2");
+   
+   Local JsonArray &jaColumns = CreateJsonArray();
+   
+   &jaColumns.AddElement("log");
+   &jaColumns.AddElement("backtrace");
+   &jaColumns.AddElement("type");
+   
+   &joOutput.AddJsonArray("columns", &jaColumns);
+   
+   &joOutput.AddJsonArray("rows", &mjaRows);
+   
+   Local JavaObject &jEncoder = CreateJavaObject("com.peoplesoft.tools.util.Base64");
+   Local JavaObject &jRawData = CreateJavaObject("java.lang.String", &joOutput.ToString()).getBytes("UTF8");
+   Local JavaObject &jEncodedData = CreateJavaObject("java.lang.String", &jEncoder.encode(&jRawData));
+   
+   Return &jEncodedData.toString();
+   
+end-method;
