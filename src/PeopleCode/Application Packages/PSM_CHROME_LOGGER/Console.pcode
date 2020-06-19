@@ -1,3 +1,7 @@
+/*
+  PeopleCode server side library for Chrome Logger (https://craig.is/writing/chrome-logger)
+*/
+
 class Console
    method Console();
    method Log(&pjnLogData As JsonNode);

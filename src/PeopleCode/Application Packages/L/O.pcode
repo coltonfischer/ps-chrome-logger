@@ -1,0 +1,74 @@
+import PSM_CHROME_LOGGER:Console;
+
+/*
+
+  Consumer class to write console logs in Chrome Browser (https://github.com/coltonfischer/PS-Chrome-Logger)
+
+  Example usage: 
+
+    (CreateObject("L:O")).G("Hello from the server");
+
+*/
+
+class O
+   method G(&paAny As any);
+   method CreateJsonNodeFromString(&paValue As string) Returns JsonNode;
+end-class;
+
+method G
+   /+ &paAny as Any +/
+   
+   Local object &oJsonNode;
+   
+   /* Try to create object dynamically in case PSM_JSON is not installed */
+   
+   try
+      
+      &oJsonNode = CreateObject("PSM_JSON:Node");
+      &oJsonNode.SetValue(&paAny);
+      
+   catch Exception &e
+      
+      &oJsonNode = %This.CreateJsonNodeFromString(String(&paAny));
+      
+   end-try;
+   
+   Local PSM_CHROME_LOGGER:Console &oCosole = create PSM_CHROME_LOGGER:Console();
+   
+   &oCosole.Log(&oJsonNode);
+   
+end-method;
+
+
+method CreateJsonNodeFromString
+   /+ &paValue as String +/
+   /+ Returns JsonNode +/
+   
+   Local JsonNode &oJsonNode = CreateJsonNode();
+   
+   Local JsonParser &jpParser = CreateJsonParser();
+   
+   Local boolean &bSuccess;
+   
+   /* Json Parser throws an exception if the JSON string is invalid */
+   
+   try
+      
+      &bSuccess = &jpParser.Parse(&paValue);
+      
+   catch Exception &e
+      
+      &bSuccess = False;
+      
+   end-try;
+   
+   If Not &bSuccess Then
+      &oJsonNode.SetString(&paValue);
+      Return &oJsonNode;
+   End-If;
+   
+   &oJsonNode.SetJsonObject(&jpParser.GetRootObject());
+   
+   Return &oJsonNode;
+   
+end-method;
