@@ -1,3 +1,4 @@
+
 # PS-Chrome-Logger
 
 A utility to allow PeopleSoft developers to write log statements to the Chrome browser console from PeopleCode.
@@ -16,7 +17,7 @@ A utility to allow PeopleSoft developers to write log statements to the Chrome b
 
 - Click the extension icon to enable logging for the current tab's domain (It will light up blue).
 
-![Toggle Chrome Logger](https://craig.global.ssl.fastly.net/img/chromelogger/toggle.gif)
+> ![Toggle Chrome Logger](https://craig.global.ssl.fastly.net/img/chromelogger/toggle.gif)
 
 ### Usage
 
@@ -28,7 +29,7 @@ You can to write log statements from PeopleCode like this:
 
 The log output will show in the Chrome browser console like this:
 
-![Log String Output](https://github.com/coltonfischer/ps-chrome-logger/raw/master/examples/Output_String.png)
+> ![Log String Output](https://github.com/coltonfischer/ps-chrome-logger/raw/master/examples/Output_String.png)
 
 If you have the [PS-Jsonify](https://github.com/coltonfischer/ps-jsonify) utility installed then you can output PeopleCode object types.  Here is an example statement logging the Landing Page Rowset from the `PT_LANDINGPAGE` Component PeopleCode:
 
@@ -40,19 +41,15 @@ Local  Rowset  &rsLandingPages = GetLevel0()(1).GetRowset(Scroll.PTNUI_LP_PAGE);
 
 The log output will show in the Chrome browser console like this:
 
-![Log Rowset Output](https://github.com/coltonfischer/ps-chrome-logger/raw/master/examples/Output_Rowset.png)
+> ![Log Rowset Output](https://github.com/coltonfischer/ps-chrome-logger/raw/master/examples/Output_Rowset.png)
 
-If you do not use the PS-Jsonify utility then you can log raw JSON object strings to view as formatted output in the Chrome browser console.  Below is an example statement to log a JSON object that will display in the console as a collapsible, easy to read format.
-
-```
-(CreateObject("L:O")).G("{""data"": [""the"", ""simple"", ""array""]}");
-```
+If you do not use the PS-Jsonify utility then above example would output "Rowset".
 
 ### Limitations
 
 - This utility only supports the output of log statements to the Chrome browser console in PeopleCode contexts where the `%Response` object is available.  You can extend the [logging facade class](https://github.com/coltonfischer/ps-chrome-logger/blob/master/src/PeopleCode/Application%20Packages/L/O.pcode) to use different logging strategies in contexts where the `%Response` object is unavailable.  An example might include writing to a file when in an Integration Broker or Process Scheduler context.
 
-- The Chrome browser has a [limit of 250kb](https://stackoverflow.com/questions/3326210/can-http-headers-be-too-big-for-browsers) across all headers for a single request so that is the maximum amount of data you can log with this utility.
+- This utility communicates log data via HTTP response headers. The Chrome browser has a [limit of 250kb](https://stackoverflow.com/questions/3326210/can-http-headers-be-too-big-for-browsers) across all headers for a single request so this poses a limit on the amount of data you can log.
 
 ### Additional Details
 
