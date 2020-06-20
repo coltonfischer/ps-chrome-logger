@@ -31,7 +31,7 @@ The log output will show in the Chrome browser console like this:
 
 > ![Log String Output](https://github.com/coltonfischer/ps-chrome-logger/raw/master/examples/Output_String.png)
 
-If you have the [PS-Jsonify](https://github.com/coltonfischer/ps-jsonify) utility installed then you can output PeopleCode object types.  Here is an example statement logging the Landing Page Rowset from the `PT_LANDINGPAGE` Component PeopleCode:
+If you have the PS-Jsonify utility installed then you can output PeopleCode object types.  Here is an example statement logging the Landing Page Rowset from the `PT_LANDINGPAGE` Component PeopleCode:
 
 ```java
 Local  Rowset  &rsLandingPages = GetLevel0()(1).GetRowset(Scroll.PTNUI_LP_PAGE);
